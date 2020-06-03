@@ -11,7 +11,7 @@ export async function seed(knex : Knex) {
     },
     {
       title: "Papéis e Papelão",
-      image: 'papies-papelao.svg',
+      image: 'papeis-papelao.svg',
     },
     {
       title: "Resíduos Eletrônicos",
