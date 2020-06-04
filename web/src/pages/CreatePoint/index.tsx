@@ -1,5 +1,5 @@
-import React, {useEffect, useState, ChangeEvent} from "react"
-import {Link} from "react-router-dom"
+import React, {useEffect, useState, ChangeEvent, FormEvent} from "react"
+import {Link, useHistory} from "react-router-dom"
 import {FiArrowLeft} from "react-icons/fi"
 import axios from "axios"
 
@@ -24,10 +24,18 @@ interface IbgeCityResponse {
 }
 
 const CreatePoint : React.FC = ( ) => {
+  const history = useHistory()
   const [items, setItems] = useState<Item[]>([])
   const [ufs, setUFS] = useState<string[]>([])
   const [cities, setCities] = useState<string[]>([])
 
+  const [formData, setFormData] = useState({
+    name:"",
+    email:"",
+    whatsapp:"",
+  })
+
+  const [selectedItems, setSeletedItems] = useState<number[]>([])
   const [ selectedUF, setSelectedUF] = useState("0")
   const [ selectedCity, setSelectedCity] = useState("0")
   const [ initialPosition, setInitialPosition] = useState<[number,number]>([0,0])
@@ -87,6 +95,49 @@ function handleSelectCity(event: ChangeEvent<HTMLSelectElement>) {
 
  }
 
+ function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
+  const {name,value} = event.target
+  setFormData({...formData, [name]: value})
+
+ }
+
+ function handleSelectItem(id :number) {
+  const findIndex = selectedItems.findIndex(item => item === id)
+
+  if(findIndex >=0 ) {
+    const filteredItens = selectedItems.filter(item => item !== id)
+    setSeletedItems(filteredItens)
+    
+  } else {
+    setSeletedItems([...selectedItems,id])
+
+  }
+
+ }
+
+ async function handleSubmit(e : FormEvent) {
+   e.preventDefault()
+   console.log('entrei')
+   const {name,email,whatsapp} = formData
+   const uf = selectedUF
+   const city = selectedCity
+   const [latitude,longitude] = selectedPosition
+   const items = selectedItems
+   const data = {
+     name,
+     email,
+     whatsapp,
+     uf,
+     city,
+     latitude,
+     longitude,
+     items
+   }
+   const response = await api.post('/points',data)
+   history.push("/")
+   console.log(response)
+ }
+
 
   return (
      <div id="page-create-point">
@@ -97,7 +148,7 @@ function handleSelectCity(event: ChangeEvent<HTMLSelectElement>) {
            Voltar para home
          </Link>
        </header>
-       <form>
+       <form onSubmit={handleSubmit}>
          <h1>Cadastro do <br/> ponto de coleta</h1>
          <fieldset>
            <legend>
@@ -110,6 +161,7 @@ function handleSelectCity(event: ChangeEvent<HTMLSelectElement>) {
                    type="email"
                    name="email"
                    id="email"
+                   onChange={handleInputChange}
               >
              
              </input>
@@ -122,6 +174,8 @@ function handleSelectCity(event: ChangeEvent<HTMLSelectElement>) {
                    type="text"
                    name="name"
                    id="name"
+                   onChange={handleInputChange}
+
               >
              
              </input>
@@ -133,6 +187,8 @@ function handleSelectCity(event: ChangeEvent<HTMLSelectElement>) {
                    type="text"
                    name="whatsapp"
                    id="whatsapp"
+                   onChange={handleInputChange}
+
               >
              
              </input>
@@ -188,7 +244,7 @@ function handleSelectCity(event: ChangeEvent<HTMLSelectElement>) {
            <ul className="items-grid">
 
              {items.map(item => (
-                            <li key={String(item.id)} className="selected">
+                            <li key={String(item.id)} className={selectedItems.includes(item.id)? "selected": ""} onClick={() => handleSelectItem(item.id)}>
                             <img src={item.image_url} alt={item.title}></img>
              <span>{item.title}</span>
                           </li>  
