@@ -1,10 +1,10 @@
 {
   "expoServerNgrokUrl": "https://53-vs7.adriano-machado.mobile.exp.direct",
   "packagerNgrokUrl": "https://packager.53-vs7.adriano-machado.mobile.exp.direct",
-  "ngrokPid": 20332,
+  "ngrokPid": 21036,
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 7028,
+  "packagerPid": 13240,
   "webpackServerPort": null,
   "devToolsPort": 19002
 }
