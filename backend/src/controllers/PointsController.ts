@@ -39,7 +39,7 @@ export default class PointsController {
   }
   async create(req :Request,res: Response) {
     const {name,email,whatsapp,latitude,longitude,city,uf,items } = req.body
-    const point = {name,email,whatsapp,latitude,longitude,city,uf, image:req.file.filename}
+    const point = {name,email,whatsapp,latitude,longitude,city,uf, image: req.file && req.file.filename}
     const trx = await knex.transaction()
     const insertedIds = await trx('points').insert(point)
     
