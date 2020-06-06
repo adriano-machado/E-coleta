@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react"
 import  Constants  from "expo-constants"
 import {View, SafeAreaView, Image, StyleSheet, Text, TouchableOpacity, ScrollView ,Alert,} from "react-native"
-import {useNavigation} from "@react-navigation/native"
+import {useNavigation, useRoute} from "@react-navigation/native"
 import {Feather as Icon} from "@expo/vector-icons"
 import MapView,{Marker} from "react-native-maps"
 import { SvgUri} from "react-native-svg"
@@ -19,14 +19,21 @@ interface Item {
 interface Points {
   id:number;
   image: string;
+  image_url:string;
   name:string;
   latitude: number;
   longitude:number;
 
 }
+
+interface Params {
+  uf:string;
+  city:string
+}
 const Points = () => {
   const [items,setItems] = useState<Item[]>([])
-
+  const route = useRoute()
+  const routeParams = route.params as Params
   const [points,setPoints] = useState<Points[]>([])
 
   const [ selectedItems,setSelectedItem] = useState<number[]>([])
@@ -103,9 +110,9 @@ const Points = () => {
       try {
         const response = await api.get("points", {
           params: {
-            city:"Rio de janeiro",
-            uf:"RJ",
-            items: [1,2,3,4,5,6]
+            city:routeParams.city,
+            uf:routeParams.uf,
+            items: selectedItems
           }
         })
         setPoints(response.data)
@@ -118,7 +125,7 @@ const Points = () => {
 
     loadPoints()
 
-  },[])
+  },[selectedItems])
 
 
   
@@ -152,7 +159,7 @@ const Points = () => {
                               >
                                 <View style={styles.mapMarkerContainer}>
                                 <Image style={styles.mapMarkerImage} source={{
-                                    uri: "http://192.168.15.13:3333/uploads/lampadas.svg"
+                                    uri: point.image_url
                                   }}></Image>
                                   <Text style={styles.mapMarkerTitle}>{point.name}</Text>
                                 </View>
